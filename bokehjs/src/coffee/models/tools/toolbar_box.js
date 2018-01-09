@@ -35,40 +35,22 @@ export class ProxyToolbar extends ToolbarBase {
   }
 
   _init_tools() {
-    return (() => {
-      const result = [];
-      for (var tool of Array.from(this.tools)) {
-        if (tool instanceof InspectTool) {
-          if (!any(this.inspectors, t => t.id === tool.id)) {
-            result.push(this.inspectors = this.inspectors.concat([tool]));
-          } else {
-            result.push(undefined);
-          }
-        } else if (tool instanceof HelpTool) {
-          if (!any(this.help, t => t.id === tool.id)) {
-            result.push(this.help = this.help.concat([tool]));
-          } else {
-            result.push(undefined);
-          }
-        } else if (tool instanceof ActionTool) {
-          if (!any(this.actions, t => t.id === tool.id)) {
-            result.push(this.actions = this.actions.concat([tool]));
-          } else {
-            result.push(undefined);
-          }
-        } else if (tool instanceof GestureTool) {
-          const et = tool.event_type;
-          if (!any(this.gestures[et].tools, t => t.id === tool.id)) {
-            result.push(this.gestures[et].tools = this.gestures[et].tools.concat([tool]));
-          } else {
-            result.push(undefined);
-          }
-        } else {
-          result.push(undefined);
-        }
+    for (var tool of Array.from(this.tools)) {
+      if (tool instanceof InspectTool) {
+        if (!any(this.inspectors, t => t.id === tool.id))
+          this.inspectors = this.inspectors.concat([tool]);
+      } else if (tool instanceof HelpTool) {
+        if (!any(this.help, t => t.id === tool.id))
+          this.help = this.help.concat([tool]);
+      } else if (tool instanceof ActionTool) {
+        if (!any(this.actions, t => t.id === tool.id))
+          this.actions = this.actions.concat([tool]);
+      } else if (tool instanceof GestureTool) {
+        const et = tool.event_type;
+        if (!any(this.gestures[et].tools, t => t.id === tool.id))
+          this.gestures[et].tools = this.gestures[et].tools.concat([tool]);
       }
-      return result;
-    })();
+    }
   }
 
   _merge_tools() {
@@ -156,22 +138,15 @@ export class ProxyToolbar extends ToolbarBase {
       }
     }
 
-    return (() => {
-      const result = [];
-      for (let et in this.gestures) {
-        ({ tools } = this.gestures[et]);
-        if (tools.length === 0) {
-          continue;
-        }
-        this.gestures[et].tools = sortBy(tools, tool => tool.default_order);
-        if (!(et == 'pinch' || et == 'scroll')) {
-          result.push(this.gestures[et].tools[0].active = true);
-        } else {
-          result.push(undefined);
-        }
+    for (let et in this.gestures) {
+      ({ tools } = this.gestures[et]);
+      if (tools.length === 0) {
+        continue;
       }
-      return result;
-    })();
+      this.gestures[et].tools = sortBy(tools, tool => tool.default_order);
+      if (!(et == 'pinch' || et == 'scroll'))
+        this.gestures[et].tools[0].active = true;
+    }
   }
 }
 ProxyToolbar.initClass();
